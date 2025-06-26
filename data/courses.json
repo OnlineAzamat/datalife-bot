@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Frontend Dasturlash",
+    "description": "HTML, CSS, JavaScript va React asoslari o'rgatiladi.",
+    "duration": "3 oy",
+    "price": "1 200 000 so'm / oy",
+    "image": "https://www.aruviinstituteoflearning.com/Style/images/6.jpg"
+  },
+  {
+    "id": 2,
+    "title": "IELTS tayyorgarlik",
+    "description": "Listening, Reading, Writing, Speaking bo'yicha tayyorlov.",
+    "duration": "4 oy",
+    "price": "1 000 000 so'm / oy",
+    "image": ""
+  },
+  {
+    "id": 1750959851543,
+    "title": "Mobilagrafiya",
+    "description": "Tavsif",
+    "duration": "1 oy",
+    "price": "1 mln",
+    "image": "yo'q"
+  }
+]
