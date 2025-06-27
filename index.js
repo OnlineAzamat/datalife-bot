@@ -9,21 +9,57 @@ const LocalSession = require('telegraf-session-local');
 const session = new LocalSession();
 bot.use(session.middleware());
 const registrationPath = './data/registrations.json';
+const locales = JSON.parse(fs.readFileSync('./data/locales.json', 'utf-8'));
 
 bot.start((ctx) => {
-  ctx.reply(`Assalomu alaykum, ${ctx.from.first_name}!\nO‘quv markazimiz botiga xush kelibsiz.`, {
+  ctx.session.lang = 'uz'; // Default til
+  return ctx.reply(t(ctx, 'select_language'), {
+    reply_markup: languageKeyboard()
+  });
+});
+
+bot.action(/^lang_(.+)/, (ctx) => {
+  const selectedLang = ctx.match[1];
+  ctx.session.lang = selectedLang;
+
+  const name = ctx.from.first_name || '';
+  const welcomeText = t(ctx, 'start').replace('{name}', name);
+
+  return ctx.reply(welcomeText, {
     reply_markup: {
       keyboard: [
-        ['📚 Kurslar', '📝 Kursga yozilish'],
-        ['👨‍🏫 Admin bilan bog‘lanish', '📢 Bizning kanal']
+        [t(ctx, 'button_courses'), t(ctx, 'button_register')],
+        [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
+        [t(ctx, 'button_lang')]
       ],
       resize_keyboard: true
     }
   });
 });
 
+// Language
+function t(ctx, key) {
+  const lang = ctx.session?.lang || 'uz';
+  return locales[lang]?.[key] || key;
+}
+
+function languageKeyboard() {
+  return {
+    inline_keyboard: [
+      [
+        { text: '🇺🇿 O‘zbek', callback_data: 'lang_uz' },
+        { text: '🇬🇧 English', callback_data: 'lang_en' }
+      ],
+      [
+        { text: '🇷🇺 Русский', callback_data: 'lang_ru' },
+        { text: 'Qaraqalpaqsha', callback_data: 'lang_kaa' }
+      ]
+    ]
+  };
+}
+
 bot.use(async (ctx, next) => {
-  const allowedRoutes = ['/start', '📢 Bizning kanal'];
+  const allowedRoutes = ['/start', t(ctx, 'button_channel')];
   const text = ctx.message?.text;
 
   if (ctx.chat.type === 'private' && !allowedRoutes.includes(text)) {
@@ -35,8 +71,8 @@ bot.use(async (ctx, next) => {
         {
           reply_markup: {
             inline_keyboard: [
-              [{ text: '📢 Kanalga o‘tish', url: `https://t.me/${process.env.CHANNEL_USERNAME.replace('@', '')}` }],
-              [{ text: '✅ A’zo bo‘ldim', callback_data: 'check_sub_again' }]
+              [{ text: t(ctx, 'to_channel'), url: `https://t.me/${process.env.CHANNEL_USERNAME.replace('@', '')}` }],
+              [{ text: t(ctx, 'became_member'), callback_data: 'check_sub_again' }]
             ]
           }
         }
@@ -61,9 +97,9 @@ bot.action('check_sub_again', async (ctx) => {
 bot.hears('📚 Kurslar', async (ctx) => {
   const courseButtons = courses.map((course) => [course.title]);
 
-  await ctx.reply('Quyidagi kurslardan birini tanlang:', {
+  await ctx.reply(t(ctx, 'select_course'), {
     reply_markup: {
-      keyboard: [...courseButtons, ['🔙 Bosh menyu']],
+      keyboard: [...courseButtons, [t(ctx, 'main_menu')]],
       resize_keyboard: true,
       one_time_keyboard: true
     }
@@ -74,7 +110,7 @@ bot.hears('📝 Kursga yozilish', (ctx) => {
   ctx.session.registration = {};
   ctx.session.step = 'get_name';
 
-  ctx.reply('Iltimos, ismingizni yozing:');
+  ctx.reply(( t(ctx, 'reply_name') ));
 });
 
 bot.command('foydalanuvchilar', (ctx) => {
@@ -101,6 +137,14 @@ bot.command('foydalanuvchilar', (ctx) => {
     });
     ctx.reply(text);
   });
+});
+
+bot.hears(t, async (ctx) => {
+  if (ctx.message.text === t(ctx, 'button_lang')) {
+    return ctx.reply(t(ctx, 'select_language'), {
+      reply_markup: languageKeyboard()
+    });
+  }
 });
 
 bot.command('admin', (ctx) => {

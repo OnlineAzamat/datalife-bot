@@ -4,7 +4,8 @@
       "id": "1572028978:1572028978",
       "data": {
         "registration": null,
-        "step": null
+        "step": null,
+        "lang": "uz"
       }
     },
     {
@@ -15,7 +16,8 @@
           "phone": "🔙 Bekor qilish"
         },
         "step": null,
-        "newCourse": null
+        "newCourse": null,
+        "lang": "kaa"
       }
     }
   ]

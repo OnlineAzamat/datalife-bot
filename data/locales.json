@@ -1,0 +1,52 @@
+{
+  "uz": {
+    "start": "Assalomu alaykum, {name}!\nO‘quv markazimiz botiga xush kelibsiz.",
+    "menu": "Asosiy menyu:",
+    "select_language": "Iltimos, tilni tanlang:",
+    "button_courses": "📚 Kurslar",
+    "button_register": "📝 Kursga yozilish",
+    "button_contact": "👨‍🏫 Admin bilan bog‘lanish",
+    "button_channel": "📢 Bizning kanal",
+    "button_lang": "🌐 Tilni o‘zgartirish",
+    "to_channel": "📢 Kanalga o‘tish",
+    "became_member": "✅ A’zo bo‘ldim",
+    "select_course": "Quyidagi kurslardan birini tanlang:",
+    "main_menu": "🔙 Bosh menyu",
+    "reply_name": "Iltimos, ismingizni yozing:"
+  },
+  "en": {
+    "start": "Hello, {name}!\nWelcome to our education center bot.",
+    "menu": "Main menu:",
+    "select_language": "Please choose your language:",
+    "button_courses": "📚 Courses",
+    "button_register": "📝 Register",
+    "button_contact": "👨‍🏫 Contact admin",
+    "button_channel": "📢 Our channel",
+    "button_lang": "🌐 Change language"
+  },
+  "ru": {
+    "start": "Здравствуйте, {name}!\nДобро пожаловать в бот нашего учебного центра.",
+    "menu": "Главное меню:",
+    "select_language": "Пожалуйста, выберите язык:",
+    "button_courses": "📚 Курсы",
+    "button_register": "📝 Записаться",
+    "button_contact": "👨‍🏫 Связаться с админом",
+    "button_channel": "📢 Наш канал",
+    "button_lang": "🌐 Сменить язык"
+  },
+  "kaa": {
+    "start": "Assalawma áleykum, {name}!\nOqıw orayımız botına xosh kelipsiz.",
+    "menu": "Bas menyu:",
+    "select_language": "Tildi tańlań:",
+    "button_courses": "📚 Kurslar",
+    "button_register": "📝 Kúrisqa jazılıw",
+    "button_contact": "👨‍🏫 Admin menen baylanısıw",
+    "button_channel": "📢 Bizdiń kanal",
+    "button_lang": "🌐 Til tańlaw",
+    "to_channel": "📢 Kanalǵa ótiw",
+    "became_member": "✅ Aǵza boldım",
+    "select_course": "Tómendegi kurslardan birewin tańlań:",
+    "main_menu": "🔙 Bas menyu",
+    "reply_name": "Iltimas, atıńızdı jazıń:"
+  }
+}
