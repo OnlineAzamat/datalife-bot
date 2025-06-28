@@ -2,25 +2,33 @@
   {
     "id": 1,
     "title": "Frontend Dasturlash",
-    "description": "HTML, CSS, JavaScript va React asoslari o'rgatiladi.",
-    "duration": "3 oy",
-    "price": "1 200 000 so'm / oy",
+    "description": "1-ay: HTML hám CSS tiykarları \n2-ay: CSS tereńlesiwi hám beyimlesiwshilik (responsive) \n3-ay: JavaScriptqa kirisiw. \n4-ay. React tiykarları",
+    "duration": "6 oy",
+    "price": "600 000 so'm / oy",
     "image": "https://www.aruviinstituteoflearning.com/Style/images/6.jpg"
   },
   {
     "id": 2,
-    "title": "IELTS tayyorgarlik",
-    "description": "Listening, Reading, Writing, Speaking bo'yicha tayyorlov.",
-    "duration": "4 oy",
-    "price": "1 000 000 so'm / oy",
+    "title": "Computer Foundation",
+    "description": "Kompyuter menen tanısıw \nPower Point hám Canva programmaları menen tanısıw \nGoogle docs hám jasalma intelekt \nMámleketlik xizmetler portalı my.gov.uz, one.id, e-imzo.uz menen islew.",
+    "duration": "1 oy",
+    "price": "500 000 so'm / oy",
     "image": ""
   },
   {
-    "id": 1750959851543,
-    "title": "Mobilagrafiya",
-    "description": "Tavsif",
-    "duration": "1 oy",
-    "price": "1 mln",
-    "image": "yo'q"
+    "id": 3,
+    "title": "Python Development",
+    "description": "Learn Python Programming from scratch with our beginner-friendly complete Python course! Learn Python key concepts like Python basics, Variables, Data types, Input/output, Operators, OOP concepts, and more. Gain hands-on experience with practical exercises to build a solid foundation in Python programming. Enrol now to learn and master Python!",
+    "duration": "6 oy",
+    "price": "600 000 so'm / oy",
+    "image": "https://5.imimg.com/data5/SELLER/Default/2022/9/DI/IZ/LY/29168669/python-course-.jpg"
+  },
+  {
+    "id": 4,
+    "title": "SOCIAL MEDIA MARKETING (SMM)",
+    "description": "1-modul: SMM tıykarları hám auditorıya analizi \n2-modul: Dóretiwshilik procesleri (Ámeliyat) \n3-modul: Strategiyalıq marketing",
+    "duration": "2 oy",
+    "price": "1 mln so'm / oy",
+    "image": ""
   }
 ]

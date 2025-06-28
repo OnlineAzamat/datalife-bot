@@ -38,9 +38,10 @@ bot.action(/^lang_(.+)/, (ctx) => {
 });
 
 // Language
-function t(ctx, key) {
-  const lang = ctx.session?.lang || 'uz';
-  return locales[lang]?.[key] || key;
+function t(ctx, key) {  
+  const lang = ctx.session && ctx.session.lang ? ctx.session.lang : 'uz';
+  const set = locales[lang];
+  return set && set[key] ? set[key] : key;
 }
 
 function languageKeyboard() {
@@ -59,15 +60,24 @@ function languageKeyboard() {
 }
 
 bot.use(async (ctx, next) => {
-  const allowedRoutes = ['/start', t(ctx, 'button_channel')];
   const text = ctx.message?.text;
+  const bypassTexts = [
+    '/start',
+    t(ctx, 'button_lang'),
+    t(ctx, 'button_courses'),
+    t(ctx, 'button_register'),
+    t(ctx, 'button_contact'),
+    t(ctx, 'button_channel'),
+    t(ctx, 'main_menu'),
+    t(ctx, 'menu'),
+    t(ctx, 'cancel')
+  ];
 
-  if (ctx.chat.type === 'private' && !allowedRoutes.includes(text)) {
+  if (ctx.chat.type === 'private' && ctx.updateType === 'message' && !bypassTexts.includes(text)) {
     const isSubscribed = await checkSubscription(ctx.from.id, process.env.CHANNEL_USERNAME, process.env.BOT_TOKEN);
-    
+
     if (!isSubscribed) {
-      return ctx.reply(
-        `❗️Botdan foydalanish uchun bizning kanalga a’zo bo‘ling:\n${process.env.CHANNEL_USERNAME}`,
+      await ctx.reply(`${t(ctx, 'important_channel_link')}\n${process.env.CHANNEL_USERNAME}`,
         {
           reply_markup: {
             inline_keyboard: [
@@ -75,8 +85,8 @@ bot.use(async (ctx, next) => {
               [{ text: t(ctx, 'became_member'), callback_data: 'check_sub_again' }]
             ]
           }
-        }
-      );
+        }); // Kanalga a'zo bo'lishni so'rash
+      return;
     }
   }
 
@@ -94,29 +104,10 @@ bot.action('check_sub_again', async (ctx) => {
   }
 });
 
-bot.hears('📚 Kurslar', async (ctx) => {
-  const courseButtons = courses.map((course) => [course.title]);
-
-  await ctx.reply(t(ctx, 'select_course'), {
-    reply_markup: {
-      keyboard: [...courseButtons, [t(ctx, 'main_menu')]],
-      resize_keyboard: true,
-      one_time_keyboard: true
-    }
-  });
-});
-
-bot.hears('📝 Kursga yozilish', (ctx) => {
-  ctx.session.registration = {};
-  ctx.session.step = 'get_name';
-
-  ctx.reply(( t(ctx, 'reply_name') ));
-});
-
 bot.command('foydalanuvchilar', (ctx) => {
   const admins = process.env.ADMIN_IDS.split(',');
   if (!admins.includes(ctx.from.id.toString())) {
-    return ctx.reply('❌ Sizda ruxsat yo‘q.');
+    return ctx.reply( t(ctx, 'dont_have_permission') );
   }
 
   let list = [];
@@ -124,14 +115,14 @@ bot.command('foydalanuvchilar', (ctx) => {
   try {
     list = JSON.parse(fs.readFileSync('./data/registrations.json', 'utf-8'));
   } catch (e) {
-    return ctx.reply('📂 Hozircha ro‘yxatdan o‘tganlar yo‘q.');
+    return ctx.reply( t(ctx, 'no_registered_users') );
   }
 
-  if (list.length === 0) return ctx.reply('📂 Hozircha ro‘yxatdan o‘tganlar yo‘q.');
+  if (list.length === 0) return ctx.reply( t(ctx, 'no_registered_users') );
 
   const chunks = chunkArray(list, 10); // uzun ro'yxatlarni bo'lish
   chunks.forEach((group, index) => {
-    let text = `📋 Foydalanuvchilar ro‘yxati (${index + 1}-qism):\n\n`;
+    let text = `${t(ctx, 'list_of_users')} (${index + 1}-qism):\n\n`;
     group.forEach((item, i) => {
       text += `${i + 1}. 👤 ${item.name}, 📱 ${item.phone}, 📚 ${item.course}\n`;
     });
@@ -139,27 +130,19 @@ bot.command('foydalanuvchilar', (ctx) => {
   });
 });
 
-bot.hears(t, async (ctx) => {
-  if (ctx.message.text === t(ctx, 'button_lang')) {
-    return ctx.reply(t(ctx, 'select_language'), {
-      reply_markup: languageKeyboard()
-    });
-  }
-});
-
 bot.command('admin', (ctx) => {
   const admins = process.env.ADMIN_IDS.split(',');
   if (!admins.includes(ctx.from.id.toString())) {
-    return ctx.reply('❌ Sizda admin panelga ruxsat yo‘q.');
+    return ctx.reply( t(ctx, 'dont_have_access') );
   }
 
   return ctx.reply('⚙️ Admin panel:', {
     reply_markup: {
       inline_keyboard: [
-        [{ text: '➕ Kurs qo‘shish', callback_data: 'add_course' }],
-        [{ text: '➖ Kurs o‘chirish', callback_data: 'delete_course' }],
-        [{ text: '🗑 Ro‘yxatni tozalash', callback_data: 'clear_registrations' }],
-        [{ text: '📋 Ro‘yxatni ko‘rish', callback_data: 'list_users' }]
+        [{ text: t(ctx, 'add_course'), callback_data: 'add_course' }],
+        [{ text: t(ctx, 'delete_course'), callback_data: 'delete_course' }],
+        [{ text: t(ctx, 'clear_registrations'), callback_data: 'clear_registrations' }],
+        [{ text: t(ctx, 'show_list_users'), callback_data: 'list_users' }]
       ]
     }
   });
@@ -178,16 +161,42 @@ bot.on('text', async (ctx) => {
   const text = ctx.message.text;
   const step = ctx.session?.step;
 
+  if (ctx.message.text === t(ctx, 'button_lang')) {
+    return ctx.reply(t(ctx, 'select_language'), {
+      reply_markup: languageKeyboard()
+    });
+  }
+
+  if (text === t(ctx, 'button_courses')) {
+    const courseButtons = courses.map((course) => [course.title]);
+  
+    return ctx.reply(t(ctx, 'select_course'), {
+      reply_markup: {
+        keyboard: [...courseButtons, [t(ctx, 'main_menu')]],
+        resize_keyboard: true,
+        one_time_keyboard: true
+      }
+    });
+  }
+
+  if (text === t(ctx, 'button_register')) {
+    ctx.session.registration = {};
+    ctx.session.step = 'get_name';
+
+    ctx.reply(( t(ctx, 'reply_name') ));
+  }
+
   // 1. Bosh menyuga qaytish
-  if (text === '🔙 Bosh menyu' || text === '🔙 Bekor qilish') {
+  if (text === t(ctx, 'main_menu') || text === t(ctx, 'cancel')) {
     ctx.session.step = null;
     ctx.session.registration = null;
-
-    return ctx.reply('Asosiy menyu:', {
+  
+    return ctx.reply(t(ctx, 'menu'), {
       reply_markup: {
         keyboard: [
-          ['📚 Kurslar', '📝 Kursga yozilish'],
-          ['👨‍🏫 Admin bilan bog‘lanish', '📢 Bizning kanal']
+          [t(ctx, 'button_courses'), t(ctx, 'button_register')],
+          [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
+          [t(ctx, 'button_lang')]
         ],
         resize_keyboard: true
       }
@@ -199,11 +208,11 @@ bot.on('text', async (ctx) => {
     ctx.session.registration.name = text;
     ctx.session.step = 'get_phone';
   
-    return ctx.reply('📱 Telefon raqamingizni yuboring:', {
+    return ctx.reply(t(ctx, 'send_ur_phone'), {
       reply_markup: {
         keyboard: [
-          [{ text: '📤 Raqamni yuborish', request_contact: true }],
-          ['🔙 Bekor qilish']
+          [{ text: t(ctx, 'button_send_phone_number'), request_contact: true }],
+          [ t(ctx, 'cancel') ]
         ],
         resize_keyboard: true,
         one_time_keyboard: true
@@ -213,7 +222,7 @@ bot.on('text', async (ctx) => {
 
   if (step === 'select_course') {
     const course = courses.find(c => c.title === text);
-    if (!course) return ctx.reply('Noto‘g‘ri kurs tanlovi. Iltimos, qayta tanlang.');
+    if (!course) return ctx.reply( t(ctx, 'invalid_course') );
 
     ctx.session.registration.course = course.title;
 
@@ -225,7 +234,7 @@ bot.on('text', async (ctx) => {
       await ctx.telegram.sendMessage(adminId, msg, { parse_mode: 'Markdown' });
     }
 
-    await ctx.reply('✅ Yozuv muvaffaqiyatli yuborildi! Tez orada siz bilan bog‘lanamiz.');
+    await ctx.reply( t(ctx, 'sent_successfully') );
     let registrations = [];
 
     try {
@@ -247,11 +256,12 @@ bot.on('text', async (ctx) => {
     ctx.session.step = null;
     ctx.session.registration = null;
 
-    return ctx.reply('Asosiy menyu:', {
+    return ctx.reply( t(ctx, 'menu') , {
       reply_markup: {
         keyboard: [
-          ['📚 Kurslar', '📝 Kursga yozilish'],
-          ['👨‍🏫 Admin bilan bog‘lanish', '📢 Bizning kanal']
+          [ t(ctx, 'button_courses'), t(ctx, 'button_register') ],
+          [ t(ctx, 'button_contact'), t(ctx, 'button_channel') ],
+          [t(ctx, 'button_lang')]
         ],
         resize_keyboard: true
       }
@@ -313,6 +323,16 @@ bot.on('text', async (ctx) => {
 
     return ctx.reply('✅ Kurs muvaffaqiyatli qo‘shildi.');
   }
+
+  // Admin bilan bog‘lanish
+  if (text === t(ctx, 'button_contact')) {
+    return ctx.reply(t(ctx, 'contact_info'));
+  }
+
+  // Kanal havolasi
+  if (text === t(ctx, 'button_channel')) {
+    return ctx.reply(`${t(ctx, 'channel_link')} ${process.env.CHANNEL_USERNAME}`);
+  }
 });
 
 // Telefon raqamni olish uchun 'contact' hodisasi
@@ -335,7 +355,7 @@ bot.on('contact', (ctx) => {
   const courseButtons = courses.map((c) => [c.title]);
   return ctx.reply('Qaysi kursga yozilmoqchisiz?', {
     reply_markup: {
-      keyboard: [...courseButtons, ['🔙 Bekor qilish']],
+      keyboard: [...courseButtons, [ t(ctx, 'cancel') ]],
       resize_keyboard: true,
       one_time_keyboard: true
     }
@@ -379,6 +399,5 @@ bot.action('clear_registrations', (ctx) => {
 bot.action('list_users', (ctx) => {
   ctx.telegram.sendMessage(ctx.chat.id, '/foydalanuvchilar');
 });
-
 
 bot.launch();
