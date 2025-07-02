@@ -12,5 +12,19 @@
     "course": "Frontend Dasturlash",
     "userId": 1572028978,
     "date": "2025-06-28T08:26:11.827Z"
+  },
+  {
+    "name": "Darmen",
+    "phone": "998883491410",
+    "course": "Python Dasturlash",
+    "userId": 1572028979,
+    "date": "2025-06-29T08:26:11.827Z"
+  },
+  {
+    "name": "Qwerty",
+    "phone": "998883491410",
+    "course": "Python Development",
+    "userId": 1572028978,
+    "date": "2025-06-29T11:36:15.613Z"
   }
 ]

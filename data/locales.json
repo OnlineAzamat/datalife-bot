@@ -28,7 +28,11 @@
     "send_ur_phone": "📱 Telefon raqamingizni yuboring:",
     "button_send_phone_number": "📤 Raqamni yuborish",
     "invalid_course": "Noto‘g‘ri kurs tanlovi. Iltimos, qayta tanlang.",
-    "sent_successfully": "✅ Yozuv muvaffaqiyatli yuborildi! Tez orada siz bilan bog‘lanamiz."
+    "sent_successfully": "✅ Yozuv muvaffaqiyatli yuborildi! Tez orada siz bilan bog‘lanamiz.",
+    "before_select_lang": "Iltimos, avval tilni tanlang.",
+    "res_waiting_ai": "⏳ Javob tayyorlanmoqda...",
+    "ask_question": "Savol so'rash",
+    "write_question": "Savolingizni yozing:"
   },
   "en": {
     "start": "Hello, {name}!\nWelcome to our education center bot.",
@@ -59,7 +63,11 @@
     "send_ur_phone": "📱 Send your phone number:",
     "button_send_phone_number": "📤 Send number",
     "invalid_course": "Invalid course selection. Please select again.",
-    "sent_successfully": "✅ The entry was sent successfully! We will contact you soon."
+    "sent_successfully": "✅ The entry was sent successfully! We will contact you soon.",
+    "before_select_lang": "Please select a language first.",
+    "res_waiting_ai": "⏳ The answer is being prepared...",
+    "ask_question": "Ask a question",
+    "write_question": "Write your question:"
   },
   "ru": {
     "start": "Здравствуйте, {name}!\nДобро пожаловать в бот нашего учебного центра.",
@@ -90,7 +98,11 @@
     "send_ur_phone": "📱 Отправьте свой номер телефона:",
     "button_send_phone_number": "📤 Отправить номер",
     "invalid_course": "Неверный выбор курса. Пожалуйста, выберите еще раз.",
-    "sent_successfully": "✅ Запись успешно отправлена! Мы свяжемся с вами в ближайшее время."
+    "sent_successfully": "✅ Запись успешно отправлена! Мы свяжемся с вами в ближайшее время.",
+    "before_select_lang": "Сначала выберите язык.",
+    "res_waiting_ai":"⏳ Ответ готовится...",
+    "ask_question": "Задать вопрос",
+    "write_question": "Напишите свой вопрос:"
   },
   "kaa": {
     "start": "Assalawma áleykum, {name}!\nOqıw orayımız botına xosh kelipsiz.",
@@ -121,6 +133,10 @@
     "send_ur_phone":"📱 Telefon nomerińizdi jiberiń:",
     "button_send_phone_number":"📤 Nomerdi jiberiw",
     "invalid_course": "Natuwrı kurs tańlawı. Iltimas, qaytadan tańlań.",
-    "sent_successfully": "✅ Jazıw tabıslı jiberildi! Tez arada siz benen baylanısamız."
+    "sent_successfully": "✅ Jazıw tabıslı jiberildi! Tez arada siz benen baylanısamız.",
+    "before_select_lang": "Iltimas, dáslep tildi tańlań.",
+    "res_waiting_ai":"⏳ Juwap kútilmekte...",
+    "ask_question": "Sorawım bar",
+    "write_question": "Sorawıńızdı jazıń:"
   }
 }

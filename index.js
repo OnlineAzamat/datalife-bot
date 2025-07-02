@@ -1,15 +1,48 @@
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const fs = require('fs');
-
-const checkSubscription = require('./utils/checkSubscription');
-const bot = new Telegraf(process.env.BOT_TOKEN);
-const courses = JSON.parse(fs.readFileSync('./data/courses.json', 'utf-8'));
+const { OpenAI } = require("openai");
 const LocalSession = require('telegraf-session-local');
 const session = new LocalSession();
-bot.use(session.middleware());
+
+const checkSubscription = require('./utils/checkSubscription');
+const { Pool } = require('pg');
+const courses = JSON.parse(fs.readFileSync('./data/courses.json', 'utf-8'));
 const registrationPath = './data/registrations.json';
 const locales = JSON.parse(fs.readFileSync('./data/locales.json', 'utf-8'));
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// 🧠 OpenAI sozlamalari
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const db = new Pool({
+  host: process.env.PG_HOST || 'localhost',
+  user: process.env.PG_USER || 'postgres',
+  password: process.env.PG_PASSWORD || 'Byudjet2020#',
+  database: process.env.PG_DB || 'rag_chatbot',
+  port: process.env.PG_PORT || 5432,
+});
+
+bot.use(session.middleware());
+
+// 📂 Har bir foydalanuvchining suhbati DBda saqlanadi
+async function saveMessage(user_id, role, message) {
+  await db.query(
+    `INSERT INTO conversations (user_id, role, message) VALUES ($1, $2, $3)`,
+    [user_id, role, message]
+  );
+}
+
+// ⏪ Oxirgi 6 xabarni olish (3 savol + 3 javob)
+async function getChatHistory(user_id) {
+  const res = await db.query(
+    `SELECT role, message FROM conversations WHERE user_id = $1 ORDER BY created_at DESC LIMIT 6`,
+    [user_id]
+  );
+  return res.rows.reverse();
+}
 
 bot.start((ctx) => {
   ctx.session.lang = 'uz'; // Default til
@@ -30,7 +63,7 @@ bot.action(/^lang_(.+)/, (ctx) => {
       keyboard: [
         [t(ctx, 'button_courses'), t(ctx, 'button_register')],
         [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
-        [t(ctx, 'button_lang')]
+        [t(ctx, 'ask_question')], [t(ctx, 'button_lang')]
       ],
       resize_keyboard: true
     }
@@ -157,9 +190,73 @@ function chunkArray(array, size) {
   return chunks;
 }
 
-bot.on('text', async (ctx) => {
+bot.on('text', async (ctx, next) => {
+  if (!ctx.session.lang) return ctx.reply(t(ctx, 'before_select_lang'));
+
+  const userId = String(ctx.from.id);
   const text = ctx.message.text;
   const step = ctx.session?.step;
+
+  if (ctx.message.text === t(ctx, 'ask_question')) {
+    ctx.session.step = 'ask_question';
+    return ctx.reply( t(ctx, 'write_question') );
+  }
+
+  if (step === 'ask_question') {
+    // 🔐 Parallel so'rovlar bo'lmasligi uchun tekshiruv
+    if (ctx.session.waitingForResponse) return;
+    ctx.session.waitingForResponse = true;
+  
+    // ⏳ Loading xabari
+    const loadingMsg = await ctx.reply(t(ctx, 'res_waiting_ai'));
+  
+    try {
+      // // 1. Savolga mos matnni topish
+      // const result = await db.query(
+      //   `SELECT text FROM documents WHERE LOWER(title) LIKE LOWER($1) LIMIT 1`,
+      //   [`%${title}%`]
+      // );    
+
+      // if (result.rows.length === 0) {
+      //   return res.json({
+      //     answer: "Kechirasiz, bu savol bo‘yicha maʼlumot topilmadi."
+      //   });
+      // }
+
+      // const context = result.rows[0].text;
+
+      // ⏪ Tarixni olish
+      const history = await getChatHistory(userId);
+      const messages = [
+        { role: "system", content: `Sen foydalanuvchiga '${ctx.session.lang}' tilida yordam beradigan sun'iy intellektsan.` },
+        ...history,
+        { role: "user", content: text },
+      ];
+  
+      // 🧠 OpenAI'dan javob
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages,
+      });      
+  
+      const answer = completion.choices[0].message.content;
+  
+      // 📥 Bazaga yozish
+      await saveMessage(userId, "user", text);
+      await saveMessage(userId, "assistant", answer);
+  
+      // ✅ Javob yuborish
+      await ctx.reply(answer);
+    } catch (err) {
+      console.error("OpenAI xatosi:", err.message);
+      await ctx.reply("Kechirasiz, javob olishda xatolik yuz berdi.");
+    } finally {
+      // ⛔ Loaderni o'chirish va flagni tiklash
+      ctx.session.waitingForResponse = false;
+      ctx.deleteMessage(loadingMsg.message_id).catch(() => {});
+      ctx.session.step = null;
+    }
+  }
 
   if (ctx.message.text === t(ctx, 'button_lang')) {
     return ctx.reply(t(ctx, 'select_language'), {
@@ -196,7 +293,7 @@ bot.on('text', async (ctx) => {
         keyboard: [
           [t(ctx, 'button_courses'), t(ctx, 'button_register')],
           [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
-          [t(ctx, 'button_lang')]
+          [t(ctx, 'ask_question')], [t(ctx, 'button_lang')]
         ],
         resize_keyboard: true
       }
@@ -401,3 +498,7 @@ bot.action('list_users', (ctx) => {
 });
 
 bot.launch();
+
+// 📛 Tugatish signali
+process.once("SIGINT", () => bot.stop("SIGINT"));
+process.once("SIGTERM", () => bot.stop("SIGTERM"));

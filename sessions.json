@@ -5,16 +5,14 @@
       "data": {
         "registration": null,
         "step": null,
-        "lang": "en"
+        "lang": "uz",
+        "waitingForResponse": false
       }
     },
     {
       "id": "1966337997:1966337997",
       "data": {
-        "registration": {
-          "name": "dfbhd",
-          "phone": "🔙 Bekor qilish"
-        },
+        "registration": null,
         "step": null,
         "newCourse": null,
         "lang": "kaa"
