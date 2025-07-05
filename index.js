@@ -4,6 +4,7 @@ const fs = require('fs');
 const { OpenAI } = require("openai");
 const LocalSession = require('telegraf-session-local');
 const session = new LocalSession();
+const { search } = require("./search");
 
 const checkSubscription = require('./utils/checkSubscription');
 const { Pool } = require('pg');
@@ -41,7 +42,12 @@ async function getChatHistory(user_id) {
     `SELECT role, message FROM conversations WHERE user_id = $1 ORDER BY created_at DESC LIMIT 6`,
     [user_id]
   );
-  return res.rows.reverse();
+
+  // 'message' maydonini 'content' qilib qaytaramiz
+  return res.rows.reverse().map(row => ({
+    role: row.role,
+    content: row.message, // ❗ bu yer muhim
+  }));
 }
 
 bot.start((ctx) => {
@@ -211,33 +217,29 @@ bot.on('text', async (ctx, next) => {
     const loadingMsg = await ctx.reply(t(ctx, 'res_waiting_ai'));
   
     try {
-      // // 1. Savolga mos matnni topish
-      // const result = await db.query(
-      //   `SELECT text FROM documents WHERE LOWER(title) LIKE LOWER($1) LIMIT 1`,
-      //   [`%${title}%`]
-      // );    
+      const results = await search(text, 1);
 
-      // if (result.rows.length === 0) {
-      //   return res.json({
-      //     answer: "Kechirasiz, bu savol bo‘yicha maʼlumot topilmadi."
-      //   });
-      // }
-
-      // const context = result.rows[0].text;
-
+      if (!results.length || !results[0].text) {
+        await ctx.reply("Kechirasiz, savolingiz bo‘yicha mos ma’lumot topilmadi.");
+        return;
+      }
+      const contextText = results[0].text;
+      
       // ⏪ Tarixni olish
       const history = await getChatHistory(userId);
+      
       const messages = [
         { role: "system", content: `Sen foydalanuvchiga '${ctx.session.lang}' tilida yordam beradigan sun'iy intellektsan.` },
         ...history,
         { role: "user", content: text },
+        { role: "system", content: contextText },
       ];
   
       // 🧠 OpenAI'dan javob
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
         messages,
-      });      
+      });
   
       const answer = completion.choices[0].message.content;
   

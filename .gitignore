@@ -35,3 +35,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# DataBase
+chroma/db/
+embedding_db.json
+.gitignore

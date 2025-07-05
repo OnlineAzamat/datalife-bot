@@ -1,0 +1,79 @@
+Frontend Development kursı
+Kurs dawamlıǵı: 6 ay
+Háptesine: 3 kún
+Kúnine: 1.5 - 2 saat
+Oqıtıwshılar: Azamat Yakubbaev, Jamshid Yangiboyev
+Kurs bahası: 600 000 sum/ayına
+Temalar (ingliz tilinde):
+0. How does the Internet work? What is HTTP? Domain Name, Browsers, Code Environment (VS Code).
+1. HTML elements, headings, paragraph, text formatting 
+2. Attributes, styles, links, images
+3. Meta tags(favicon, title, link), media tags
+4. Task 1 HTML - Students list
+5. Tables, forms and validations
+6. Layout Elements and Techniques, Selectors
+7. Control - HTML
+CSS Basic
+1. Intro. Syntax, 
+2. Fonts, Colors
+3. Width/Height, Padding, Margins
+4. Units of measurement
+5. Border, Outline, Box model
+6. Backgrounds, Images, Opacity
+7. Text, Fonts
+8. Icons, Links
+9. Tables
+10. Display
+11. Flex
+12. Grid
+13. Position
+14. Overflow, float
+15. Pseudo-classes and Pseudo-elements
+16. Navigation Bar, Dropdowns
+17. Basic UI design
+18. Forms
+19. Shadows, Gradients, Text Effects
+20. Animations
+21. Transforms
+22. Media Queries and Responsive design
+23. Simple Project with Figma
+24. Bootstrap and tailwindcss
+--- Exam 1 - Responsive Design ---
+
+JavaScript Basic
+1. Introduction, Syntax, Comments, Output, statements
+2. Variables, Let and Const, Data Types
+3. Arithmetic operators
+4. If/else
+5. Assignment, Boolean
+6. Loop For, while
+7. Switch, Math
+8. Functions
+9. String Methods
+10. Object and properties, methods
+11. DOM Basic and Events
+12. Arrays
+13. Array Methods (push, pop, shift, unshift, slice, splice)
+14. Array Search Methods (at, join, delete, concat, find, includes)
+15. Array Iteration Methods (forEach, map, filter, reduce, every, some, spread)
+16. Classes
+17. Modules
+18. DOM Methods, Animations, Events
+19. Practice with DOM - To Do App
+20. JS Async: callbacks, promises, async/await
+21. XML, JSON, Fetch (GET method), Fetch (Post, delete method), sign in/signup
+22. Browser BOM: window, location, navigator, cookies
+
+ReactJS
+1. Introduction: Virtual DOM, npm, components
+2. React Props, Events
+3. Hooks: useState, useEffect
+4. Forms and Lists
+5. Sass - Asaxiybooks App
+6. Practice - To Do List App
+7. React Router - Routes, Link, useParams, useNavigate
+8. NPM Packages: i18next. Material UI
+9. Tailwindcss with NextJS
+12. Framer Motion
+13. Redux Toolkit
+--- Final Exam - ReactJS Project
