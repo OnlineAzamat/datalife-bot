@@ -9,6 +9,7 @@
     "button_channel": "📢 Bizning kanal",
     "button_lang": "🌐 Tilni o‘zgartirish",
     "to_channel": "📢 Kanalga o‘tish",
+    "button_close": "🔙 Yakunlash",
     "contact_info": "Admin bilan bog‘lanish: @onlineazamat",
     "channel_link": "Bizning kanal: @testserverchannel2025",
     "became_member": "✅ A’zo bo‘ldim",
@@ -31,8 +32,11 @@
     "sent_successfully": "✅ Yozuv muvaffaqiyatli yuborildi! Tez orada siz bilan bog‘lanamiz.",
     "before_select_lang": "Iltimos, avval tilni tanlang.",
     "res_waiting_ai": "⏳ Javob tayyorlanmoqda...",
-    "ask_question": "Savol so'rash",
-    "write_question": "Savolingizni yozing:"
+    "ask_question": "❓ Savol so'rash",
+    "write_question": "Savolingizni yozing:",
+    "write_or_finish_message": "Yana savolingiz bo'lsa yozing (yoki 'Yakunlash' tugmasini bosing):",
+    "close_message": "Suhbat yakunlandi. Yana savol bo‘lsa 'Savol so'rash' tugmasini bosing yoki @datalife_admin'ga yozing.",
+    "rate_wait_message": "❗ Siz juda tez savol yuboryapsiz. Iltimos, biroz kuting."
   },
   "en": {
     "start": "Hello, {name}!\nWelcome to our education center bot.",
@@ -44,6 +48,7 @@
     "button_channel": "📢 Our channel",
     "button_lang": "🌐 Change language",
     "to_channel": "📢 Go to channel",
+    "button_close": "🔙 Close",
     "contact_info": "Contact admin: @onlineazamat",
     "channel_link": "Our channel: @testserverchannel2025",
     "became_member": "✅ I became a member",
@@ -66,8 +71,11 @@
     "sent_successfully": "✅ The entry was sent successfully! We will contact you soon.",
     "before_select_lang": "Please select a language first.",
     "res_waiting_ai": "⏳ The answer is being prepared...",
-    "ask_question": "Ask a question",
-    "write_question": "Write your question:"
+    "ask_question": "❓ Ask a question",
+    "write_question": "Write your question:",
+    "write_or_finish_message": "If you have any more questions, please write (or click 'Stop'):",
+    "close_message": "The conversation is over. If you have any more questions, click the 'Ask a question' button.",
+    "rate_wait_message": "❗ You are sending a question too quickly. Please wait a moment."
   },
   "ru": {
     "start": "Здравствуйте, {name}!\nДобро пожаловать в бот нашего учебного центра.",
@@ -79,6 +87,7 @@
     "button_channel": "📢 Наш канал",
     "button_lang": "🌐 Сменить язык",
     "to_channel": "📢 Перейти на канал",
+    "button_close": "🔙 Закрыть",
     "contact_info": "Связаться с администратором: @onlineazamat",
     "channel_link": "Наш канал: @testserverchannel2025",
     "became_member": "✅ Я стал участником",
@@ -101,8 +110,11 @@
     "sent_successfully": "✅ Запись успешно отправлена! Мы свяжемся с вами в ближайшее время.",
     "before_select_lang": "Сначала выберите язык.",
     "res_waiting_ai":"⏳ Ответ готовится...",
-    "ask_question": "Задать вопрос",
-    "write_question": "Напишите свой вопрос:"
+    "ask_question": "❓ Задать вопрос",
+    "write_question": "Напишите свой вопрос:",
+    "write_or_finish_message": "Если у вас есть еще вопросы, пожалуйста, напишите (или нажмите «Закрыть»):",
+    "close_message": "Наш разговор окончен. Если у вас есть еще вопросы, нажмите кнопку «Задать вопрос».",
+    "rate_wait_message": "❗ Вы отправляете вопрос слишком быстро. Пожалуйста, подождите немного."
   },
   "kaa": {
     "start": "Assalawma áleykum, {name}!\nOqıw orayımız botına xosh kelipsiz.",
@@ -114,6 +126,7 @@
     "button_channel": "📢 Bizdiń kanal",
     "button_lang": "🌐 Til tańlaw",
     "to_channel": "📢 Kanalǵa ótiw",
+    "button_close": "🔙 Jabıw",
     "contact_info": "Admin menen baylanısıw: @onlineazamat",
     "channel_link": "Bizdiń kanal: @testserverchannel2025",
     "became_member": "✅ Aǵza boldım",
@@ -136,7 +149,10 @@
     "sent_successfully": "✅ Jazıw tabıslı jiberildi! Tez arada siz benen baylanısamız.",
     "before_select_lang": "Iltimas, dáslep tildi tańlań.",
     "res_waiting_ai":"⏳ Juwap kútilmekte...",
-    "ask_question": "Sorawım bar",
-    "write_question": "Sorawıńızdı jazıń:"
+    "ask_question": "❓ Sorawım bar",
+    "write_question": "Sorawıńızdı jazıń:",
+    "write_or_finish_message": "Jáne sorawıńız bolsa, jazıń (yáki 'Jabıw' túymesin basıń):",
+    "close_message": "Chat juwmaqlandı. Jáne sorawıńız bolsa 'Sorawım bar' túymesin basıń yáki @datalife_admin'ge jazıń.",
+    "rate_wait_message": "❗ Siz júdá tez soraw jiberip atırsız. Iltimas, biraz kútiń."
   }
 }

@@ -6,7 +6,10 @@
         "registration": null,
         "step": null,
         "lang": "uz",
-        "waitingForResponse": false
+        "waitingForResponse": false,
+        "expectingQuestion": false,
+        "lastInteraction": 1751804663647,
+        "messageCount": 2
       }
     },
     {

@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Telegraf } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf');
 const fs = require('fs');
 const { OpenAI } = require("openai");
 const LocalSession = require('telegraf-session-local');
@@ -98,8 +98,13 @@ function languageKeyboard() {
   };
 }
 
+const rateLimit = {};
+
 bot.use(async (ctx, next) => {
   const text = ctx.message?.text;
+  const userId = ctx.from?.id;
+  const now = Date.now();
+
   const bypassTexts = [
     '/start',
     t(ctx, 'button_lang'),
@@ -127,6 +132,13 @@ bot.use(async (ctx, next) => {
         }); // Kanalga a'zo bo'lishni so'rash
       return;
     }
+  }
+
+  if (!rateLimit[userId]) rateLimit[userId] = [];
+  rateLimit[userId] = rateLimit[userId].filter(ts => now - ts < 60_000); // oxirgi 1 daqiqa
+
+  if (rateLimit[userId].length >= 3) {
+    return ctx.reply( t(ctx, "rate_wait_message") );
   }
 
   return next();
@@ -203,12 +215,72 @@ bot.on('text', async (ctx, next) => {
   const text = ctx.message.text;
   const step = ctx.session?.step;
 
+  if (text === t(ctx, "button_close")) {
+    ctx.session.step = null;
+    ctx.session.expectingQuestion = false;
+    ctx.session.waitingForResponse = false;
+    ctx.session.messageCount = 0;
+
+    return ctx.reply( t(ctx, 'close_message'), {
+      reply_markup: {
+        keyboard: [
+          [t(ctx, 'button_courses'), t(ctx, 'button_register')],
+          [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
+          [t(ctx, 'ask_question')], [t(ctx, 'button_lang')]
+        ],
+        resize_keyboard: true
+      }
+    });
+  }
+
   if (ctx.message.text === t(ctx, 'ask_question')) {
     ctx.session.step = 'ask_question';
-    return ctx.reply( t(ctx, 'write_question') );
+    return ctx.reply( t(ctx, 'write_question'), {
+      reply_markup: {
+        keyboard: [[ t(ctx, 'button_close') ]],
+        resize_keyboard: true
+      }
+    });
   }
 
   if (step === 'ask_question') {
+    // Foydalanuvchi xabarlarini hisoblash uchun sessiya qiymatini tekshiramiz
+    if (!ctx.session.messageCount) {
+      ctx.session.messageCount = 0; // Agar mavjud bo'lmasa, 0 ga o'rnatamiz
+    }
+    console.log(ctx.session.messageCount);
+    
+    // Xabarlar sonini oshiramiz
+    ctx.session.messageCount++;
+
+    // Maksimal 10 ta xabarni tekshiramiz
+    if (ctx.session.messageCount > 10) {
+      ctx.session.step = null; // Bosqichni tozalaymiz
+      ctx.session.messageCount = 0; // Hisoblagichni qayta tiklaymiz
+
+      return ctx.reply("❗️ Sizning chat sessiyangiz yakunlandi. Yangi savol berish uchun qayta boshlang.", {
+        reply_markup: {
+          keyboard: [
+            [t(ctx, 'button_courses'), t(ctx, 'button_register')],
+            [t(ctx, 'button_contact'), t(ctx, 'button_channel')],
+            [t(ctx, 'ask_question')], [t(ctx, 'button_lang')]
+          ],
+          resize_keyboard: true
+        }
+      });
+    }
+
+    const now = Date.now();
+    // 10 minut ishinde xabar jazılmasa chattı juwmaqlaw
+    if (ctx.session.lastInteraction && now - ctx.session.lastInteraction > 10 * 60 * 1000) {
+      ctx.session.step = null;
+      ctx.session.expectingQuestion = false;
+      ctx.session.waitingForResponse = false;
+      ctx.session.messageCount = 0;
+    }
+    ctx.session.lastInteraction = now;
+
+
     // 🔐 Parallel so'rovlar bo'lmasligi uchun tekshiruv
     if (ctx.session.waitingForResponse) return;
     ctx.session.waitingForResponse = true;
@@ -223,9 +295,8 @@ bot.on('text', async (ctx, next) => {
         await ctx.reply("Kechirasiz, savolingiz bo‘yicha mos ma’lumot topilmadi.");
         return;
       }
+
       const contextText = results[0].text;
-      
-      // ⏪ Tarixni olish
       const history = await getChatHistory(userId);
       
       const messages = [
@@ -246,9 +317,13 @@ bot.on('text', async (ctx, next) => {
       // 📥 Bazaga yozish
       await saveMessage(userId, "user", text);
       await saveMessage(userId, "assistant", answer);
-  
+      
       // ✅ Javob yuborish
       await ctx.reply(answer);
+      
+      // 🤝 Endi yangi savol kutish holatiga o'tkazamiz
+      ctx.session.expectingQuestion = true;
+      await ctx.reply(t(ctx, "write_or_finish_message"), Markup.keyboard([[ t(ctx, "button_close") ]]).resize());
     } catch (err) {
       console.error("OpenAI xatosi:", err.message);
       await ctx.reply("Kechirasiz, javob olishda xatolik yuz berdi.");
@@ -256,7 +331,7 @@ bot.on('text', async (ctx, next) => {
       // ⛔ Loaderni o'chirish va flagni tiklash
       ctx.session.waitingForResponse = false;
       ctx.deleteMessage(loadingMsg.message_id).catch(() => {});
-      ctx.session.step = null;
+      ctx.session.step = "ask_question"; // Davom etsin
     }
   }
 
@@ -360,7 +435,7 @@ bot.on('text', async (ctx, next) => {
         keyboard: [
           [ t(ctx, 'button_courses'), t(ctx, 'button_register') ],
           [ t(ctx, 'button_contact'), t(ctx, 'button_channel') ],
-          [t(ctx, 'button_lang')]
+          [ t(ctx, 'button_lang') ]
         ],
         resize_keyboard: true
       }
@@ -461,7 +536,6 @@ bot.on('contact', (ctx) => {
   });
 });
 
-
 bot.action('add_course', (ctx) => {
   ctx.session.step = 'admin_add_title';
   ctx.session.newCourse = {};
@@ -500,7 +574,3 @@ bot.action('list_users', (ctx) => {
 });
 
 bot.launch();
-
-// 📛 Tugatish signali
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
