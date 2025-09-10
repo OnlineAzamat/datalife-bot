@@ -8,8 +8,8 @@
         "lang": "uz",
         "waitingForResponse": false,
         "expectingQuestion": false,
-        "lastInteraction": 1751804663647,
-        "messageCount": 2
+        "lastInteraction": 1757504763765,
+        "messageCount": 0
       }
     },
     {
@@ -19,6 +19,12 @@
         "step": null,
         "newCourse": null,
         "lang": "kaa"
+      }
+    },
+    {
+      "id": "7566085758:7566085758",
+      "data": {
+        "lang": "uz"
       }
     }
   ]

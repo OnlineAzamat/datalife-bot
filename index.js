@@ -193,10 +193,17 @@ bot.command('admin', (ctx) => {
         [{ text: t(ctx, 'add_course'), callback_data: 'add_course' }],
         [{ text: t(ctx, 'delete_course'), callback_data: 'delete_course' }],
         [{ text: t(ctx, 'clear_registrations'), callback_data: 'clear_registrations' }],
-        [{ text: t(ctx, 'show_list_users'), callback_data: 'list_users' }]
+        [{ text: t(ctx, 'show_list_users'), callback_data: 'list_users' }],
+        [{ text: '📢 Xabar jo\'natish', callback_data: 'send_message' }],
       ]
     }
   });
+});
+
+// Xabar jo'natish uchun callback
+bot.action('send_message', (ctx) => {
+  ctx.session.step = 'admin_send_message';
+  return ctx.reply('📝 Jo\'natmoqchi bo\'lgan xabaringizni yozing:');
 });
 
 // Ro'yxatni bo'lish funksiyasi
@@ -210,6 +217,7 @@ function chunkArray(array, size) {
 
 bot.on('text', async (ctx, next) => {
   if (!ctx.session.lang) return ctx.reply(t(ctx, 'before_select_lang'));
+  const lang = ctx.session.lang;
 
   const userId = String(ctx.from.id);
   const text = ctx.message.text;
@@ -231,6 +239,40 @@ bot.on('text', async (ctx, next) => {
         resize_keyboard: true
       }
     });
+  }
+
+  if (ctx.session?.step === 'admin_send_message') {
+    const admins = process.env.ADMIN_IDS.split(',');
+    if (!admins.includes(ctx.from.id.toString())) {
+      return ctx.reply('❌ Sizda adminlik huquqi yo\'q');
+    }
+
+    try {
+      // Barcha foydalanuvchilar ro'yxatini olish
+      const users = JSON.parse(fs.readFileSync('./data/registrations.json', 'utf8'));
+      let successCount = 0;
+      let errorCount = 0;
+
+      // Har bir foydalanuvchiga xabar jo'natish
+      for (const user of users) {
+        try {
+          await ctx.telegram.sendMessage(user.userId, ctx.message.text);
+          successCount++;
+        } catch (error) {
+          console.error(`Error sending message to user ${user.userId}:`, error);
+          errorCount++;
+        }
+        // Har bir xabar orasida 50ms kutish
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+
+      ctx.session.step = null;
+      return ctx.reply(`✅ Xabar jo'natildi:\n✅ Muvaffaqiyatli: ${successCount}\n❌ Xatolik: ${errorCount}`);
+
+    } catch (error) {
+      console.error('Error sending broadcast message:', error);
+      return ctx.reply('❌ Xabar jo\'natishda xatolik yuz berdi');
+    }
   }
 
   if (ctx.message.text === t(ctx, 'ask_question')) {
@@ -342,7 +384,7 @@ bot.on('text', async (ctx, next) => {
   }
 
   if (text === t(ctx, 'button_courses')) {
-    const courseButtons = courses.map((course) => [course.title]);
+    const courseButtons = courses.map((course) => [course.content[lang].title]);
   
     return ctx.reply(t(ctx, 'select_course'), {
       reply_markup: {
@@ -395,13 +437,13 @@ bot.on('text', async (ctx, next) => {
   }
 
   if (step === 'select_course') {
-    const course = courses.find(c => c.title === text);
+    const course = courses.find(c => c.content[lang].title === text);
     if (!course) return ctx.reply( t(ctx, 'invalid_course') );
 
-    ctx.session.registration.course = course.title;
+    ctx.session.registration.course = course.content[lang].title;
 
     const reg = ctx.session.registration;
-    const msg = `📝 *Yangi ro'yxatdan o'tish:*\n\n👤 Ism: ${reg.name}\n📱 Telefon: ${reg.phone}\n📚 Kurs: ${reg.course}`;
+    const msg = `📝 *Yangi ro'yxatdan o'tish:*\n\n📩 ID: ${ctx.from.id} \n👤 Ism: ${reg.name}\n📱 Telefon: +${reg.phone}\n📚 Kurs: ${reg.course}`;
 
     const admins = process.env.ADMIN_IDS.split(',');
     for (const adminId of admins) {
@@ -443,9 +485,9 @@ bot.on('text', async (ctx, next) => {
   }
 
   // 3. Kurs ma'lumotini ko‘rsatish (agar yozilish holatida emas)
-  const selectedCourse = courses.find(course => course.title === text);
+  const selectedCourse = courses.find(course => course.content[lang].title === text);
   if (selectedCourse) {
-    const info = `📘 *${selectedCourse.title}*\n\n📝 ${selectedCourse.description}\n⏱ Davomiyligi: ${selectedCourse.duration}\n💰 Narxi: ${selectedCourse.price}`;
+    const info = `📘 *${selectedCourse.content[lang].title}*\n\n📝 ${selectedCourse.content[lang].description}\n⏱ Davomiyligi: ${selectedCourse.duration}\n💰 Narxi: ${selectedCourse.price}`;
 
     if (selectedCourse.image) {
       await ctx.replyWithPhoto({ url: selectedCourse.image }, { caption: info, parse_mode: 'Markdown' });
@@ -512,6 +554,7 @@ bot.on('text', async (ctx, next) => {
 // Telefon raqamni olish uchun 'contact' hodisasi
 bot.on('contact', (ctx) => {
   if (ctx.session?.step !== 'get_phone') return;
+  let lang = ctx.session.lang || 'uz';
 
   // Asosiy tekshiruv: contact mavjudmi va telefon raqam borligiga ishonch hosil qilish
   if (!ctx.message.contact || !ctx.message.contact.phone_number) {
@@ -526,8 +569,8 @@ bot.on('contact', (ctx) => {
   ctx.session.registration.phone = ctx.message.contact.phone_number;
   ctx.session.step = 'select_course';
 
-  const courseButtons = courses.map((c) => [c.title]);
-  return ctx.reply('Qaysi kursga yozilmoqchisiz?', {
+  const courseButtons = courses.map((c) => [c.content[lang].title]);
+  return ctx.reply( t(ctx, 'whichCourse') , {
     reply_markup: {
       keyboard: [...courseButtons, [ t(ctx, 'cancel') ]],
       resize_keyboard: true,

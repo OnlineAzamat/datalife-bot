@@ -11,7 +11,7 @@
     "to_channel": "📢 Kanalga o‘tish",
     "button_close": "🔙 Yakunlash",
     "contact_info": "Admin bilan bog‘lanish: @onlineazamat",
-    "channel_link": "Bizning kanal: @testserverchannel2025",
+    "channel_link": "Bizning kanal: ",
     "became_member": "✅ A’zo bo‘ldim",
     "cancel": "🔙 Bekor qilish",
     "select_course": "Quyidagi kurslardan birini tanlang:",
@@ -36,7 +36,8 @@
     "write_question": "Savolingizni yozing:",
     "write_or_finish_message": "Yana savolingiz bo'lsa yozing (yoki 'Yakunlash' tugmasini bosing):",
     "close_message": "Suhbat yakunlandi. Yana savol bo‘lsa 'Savol so'rash' tugmasini bosing yoki @datalife_admin'ga yozing.",
-    "rate_wait_message": "❗ Siz juda tez savol yuboryapsiz. Iltimos, biroz kuting."
+    "rate_wait_message": "❗ Siz juda tez savol yuboryapsiz. Iltimos, biroz kuting.",
+    "whichCourse": "Qaysi kursga yozilmoqchisiz?"
   },
   "en": {
     "start": "Hello, {name}!\nWelcome to our education center bot.",
@@ -50,7 +51,7 @@
     "to_channel": "📢 Go to channel",
     "button_close": "🔙 Close",
     "contact_info": "Contact admin: @onlineazamat",
-    "channel_link": "Our channel: @testserverchannel2025",
+    "channel_link": "Our channel: ",
     "became_member": "✅ I became a member",
     "cancel": "🔙 Cancel",
     "select_course": "Select one of the following courses:",
@@ -75,7 +76,8 @@
     "write_question": "Write your question:",
     "write_or_finish_message": "If you have any more questions, please write (or click 'Stop'):",
     "close_message": "The conversation is over. If you have any more questions, click the 'Ask a question' button.",
-    "rate_wait_message": "❗ You are sending a question too quickly. Please wait a moment."
+    "rate_wait_message": "❗ You are sending a question too quickly. Please wait a moment.",
+    "whichCourse": "Which course do you want to enroll in?"
   },
   "ru": {
     "start": "Здравствуйте, {name}!\nДобро пожаловать в бот нашего учебного центра.",
@@ -89,7 +91,7 @@
     "to_channel": "📢 Перейти на канал",
     "button_close": "🔙 Закрыть",
     "contact_info": "Связаться с администратором: @onlineazamat",
-    "channel_link": "Наш канал: @testserverchannel2025",
+    "channel_link": "Наш канал: ",
     "became_member": "✅ Я стал участником",
     "cancel": "🔙 Отменить",
     "select_course": "Выберите один из следующих курсов:",
@@ -114,7 +116,8 @@
     "write_question": "Напишите свой вопрос:",
     "write_or_finish_message": "Если у вас есть еще вопросы, пожалуйста, напишите (или нажмите «Закрыть»):",
     "close_message": "Наш разговор окончен. Если у вас есть еще вопросы, нажмите кнопку «Задать вопрос».",
-    "rate_wait_message": "❗ Вы отправляете вопрос слишком быстро. Пожалуйста, подождите немного."
+    "rate_wait_message": "❗ Вы отправляете вопрос слишком быстро. Пожалуйста, подождите немного.",
+    "whichCourse": "На какой курс вы хотите записаться?"
   },
   "kaa": {
     "start": "Assalawma áleykum, {name}!\nOqıw orayımız botına xosh kelipsiz.",
@@ -128,7 +131,7 @@
     "to_channel": "📢 Kanalǵa ótiw",
     "button_close": "🔙 Jabıw",
     "contact_info": "Admin menen baylanısıw: @onlineazamat",
-    "channel_link": "Bizdiń kanal: @testserverchannel2025",
+    "channel_link": "Bizdiń kanal: ",
     "became_member": "✅ Aǵza boldım",
     "cancel": "🔙 Biykar etiw",
     "select_course": "Tómendegi kurslardan birewin tańlań:",
@@ -153,6 +156,7 @@
     "write_question": "Sorawıńızdı jazıń:",
     "write_or_finish_message": "Jáne sorawıńız bolsa, jazıń (yáki 'Jabıw' túymesin basıń):",
     "close_message": "Chat juwmaqlandı. Jáne sorawıńız bolsa 'Sorawım bar' túymesin basıń yáki @datalife_admin'ge jazıń.",
-    "rate_wait_message": "❗ Siz júdá tez soraw jiberip atırsız. Iltimas, biraz kútiń."
+    "rate_wait_message": "❗ Siz júdá tez soraw jiberip atırsız. Iltimas, biraz kútiń.",
+    "whichCourse": "Qaysı kursqa jazılmaqshısız?"
   }
 }
